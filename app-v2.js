@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadBtn = document.getElementById('downloadCSV');
   const weekSelect = document.getElementById('weekSelect');
   const weeklyContainer = document.getElementById('weeklyEntriesContainer');
-  const weekDisplay = document.getElementById('currentWeekDisplay');
 
   let entries = JSON.parse(localStorage.getItem('volunteerEntries')) || [];
   let grouped = {};
@@ -24,20 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateObj = new Date(workDate);
     const month = dateObj.toLocaleString('default', { month: 'long' });
     const year = dateObj.getFullYear();
+    const groupKey = `${year}-${month}`;
 
     const entry = {
-      Timestamp: timestamp,
       "First Name": firstName,
       "Last Name": lastName,
-      "Date Worked": workDate,
-      Month: month,
-      Year: year,
+      "Day Worked": workDate,
       "Number of Hours Worked": hoursWorked,
       "Task Type": taskType,
-      Other: other
+      "Other": other,
+      "Timestamp": timestamp
     };
 
-    // Cloud sync
+    // Send to SheetDB
     fetch('https://sheetdb.io/api/v1/qfiimhz27242h', {
       method: 'POST',
       body: JSON.stringify({ data: entry }),
@@ -54,29 +52,29 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Cloud error – entry saved locally instead.');
     });
 
-    // Local save
-    entries.push(entry);
+    // Local storage
+    entries.push({ ...entry, groupKey }); // groupKey added for local grouping
     localStorage.setItem('volunteerEntries', JSON.stringify(entries));
     refreshView();
     form.reset();
   });
 
   downloadBtn.addEventListener('click', () => {
-    const selectedWeek = weekSelect.value;
-    if (!selectedWeek) {
+    const selectedMonth = weekSelect.value;
+    if (!selectedMonth) {
       alert("Please select a month to download.");
       return;
     }
 
-    const weekEntries = grouped[selectedWeek];
-    if (!weekEntries?.length) {
+    const monthEntries = grouped[selectedMonth];
+    if (!monthEntries?.length) {
       alert("No entries for selected month.");
       return;
     }
 
-    const csvHeader = "First Name,Last Name,Date Worked,Month,Year,Number of Hours Worked,Task Type,Other\n";
-    const csvRows = weekEntries.map(entry =>
-      `${entry["First Name"]},${entry["Last Name"]},${entry["Date Worked"]},${entry.Month},${entry.Year},${entry["Number of Hours Worked"]},${entry["Task Type"]},${entry.Other}`
+    const csvHeader = "First Name,Last Name,Day Worked,Number of Hours Worked,Task Type,Other,Timestamp\n";
+    const csvRows = monthEntries.map(entry =>
+      `${entry["First Name"]},${entry["Last Name"]},${entry["Day Worked"]},${entry["Number of Hours Worked"]},${entry["Task Type"]},${entry["Other"]},${entry["Timestamp"]}`
     );
     const csvContent = csvHeader + csvRows.join("\n");
 
@@ -84,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `volunteer_log_${selectedWeek}.csv`);
+    link.setAttribute("download", `volunteer_log_${selectedMonth}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -99,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function groupEntriesByMonth(entries) {
     const grouped = {};
     entries.forEach(entry => {
-      const key = `${entry.Year}-${entry.Month}`;
+      const key = entry.groupKey || "Unknown";
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(entry);
     });
@@ -114,11 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const ul = document.createElement('ul');
       grouped[key].forEach(entry => {
         let description = `${entry["Task Type"]}`;
-        if (entry["Task Type"] === "Other" && entry.Other) {
-          description += `: ${entry.Other}`;
+        if (entry["Task Type"] === "Other" && entry["Other"]) {
+          description += `: ${entry["Other"]}`;
         }
         const li = document.createElement('li');
-        li.textContent = `${entry["First Name"]} ${entry["Last Name"]} – ${entry["Date Worked"]} – ${entry["Number of Hours Worked"]} hour(s) – ${description}`;
+        li.textContent = `${entry["First Name"]} ${entry["Last Name"]} – ${entry["Day Worked"]} – ${entry["Number of Hours Worked"]} hour(s) – ${description}`;
         ul.appendChild(li);
       });
       section.appendChild(ul);

@@ -5,12 +5,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const weeklyContainer = document.getElementById('weeklyEntriesContainer');
 
   let entries = JSON.parse(localStorage.getItem('volunteerEntries')) || [];
+
+  // 🧼 Clean out broken entries
+  entries = entries.filter(e => e["Day Worked"] && e["Day Worked"] !== "undefined");
+  localStorage.setItem('volunteerEntries', JSON.stringify(entries));
+
   let grouped = {};
 
   refreshView();
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+
+    // ✅ Check for required fields
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
 
     const firstName = document.getElementById('firstName').value.trim();
     const lastName = document.getElementById('lastName').value.trim();
@@ -20,7 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const other = document.getElementById('otherDetails').value.trim();
     const timestamp = new Date().toISOString();
 
+    // ⛔ Check for invalid date
+    if (!workDate) {
+      alert("Please select a valid date.");
+      return;
+    }
+
     const dateObj = new Date(workDate);
+    if (isNaN(dateObj)) {
+      alert("Invalid date format.");
+      return;
+    }
+
     const month = dateObj.toLocaleString('default', { month: 'long' });
     const year = dateObj.getFullYear();
     const groupKey = `${year}-${month}`;
@@ -32,10 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
       "Number of Hours Worked": hoursWorked,
       "Task Type": taskType,
       "Other": other,
-      "Timestamp": timestamp
+      "Timestamp": timestamp,
+      groupKey
     };
 
-    // Send to SheetDB
+    // 🌐 Send to SheetDB
     fetch('https://sheetdb.io/api/v1/qfiimhz27242h', {
       method: 'POST',
       body: JSON.stringify({ data: entry }),
@@ -52,8 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Cloud error – entry saved locally instead.');
     });
 
-    // Local storage
-    entries.push({ ...entry, groupKey }); // groupKey added for local grouping
+    // 💾 Local save
+    entries.push(entry);
     localStorage.setItem('volunteerEntries', JSON.stringify(entries));
     refreshView();
     form.reset();

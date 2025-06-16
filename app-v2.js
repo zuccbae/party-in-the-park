@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       Other: other
     };
 
-    fetch('https://sheetdb.io/api/v1/c32du5n38t9gc', {
+    fetch('https://sheetdb.io/api/v1/qfiimhz27242h', {
       method: 'POST',
       body: JSON.stringify({ data: entry }),
       headers: {

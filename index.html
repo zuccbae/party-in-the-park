@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Volunteer Work Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Volunteer Workhour Tracker</h1>
+  </header>
+
+  <main>
+    <form id="logForm">
+      <label>First Name:
+        <input type="text" id="firstName" required>
+      </label><br>
+
+      <label>Last Name:
+        <input type="text" id="lastName" required>
+      </label><br>
+
+      <label>Month of Work:
+        <select id="month" required>
+          <option value="">Select Month</option>
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+        </select>
+      </label><br>
+
+      <label>Year of Work:
+        <select id="year" required>
+          <option value="">Select Year</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+          <option value="2029">2029</option>
+          <option value="2030">2030</option>
+          <option value="2031">2031</option>
+          <option value="2032">2032</option>
+          <option value="2033">2033</option>
+        </select>
+      </label><br>
+
+      <label>Number of Days Spent:
+        <input type="number" id="daysSpent" min="0" max="10" step="0.25" inputmode="decimal" required>
+        <small>Use the arrows or type decimals like 0.25, 0.5, 1</small>
+      </label><br>
+
+      <label>Task Type:
+        <select id="taskType" required>
+          <option value="">Select Task</option>
+          <option value="Project Meeting">Project Meeting</option>
+          <option value="Stakeholder Engagement">Stakeholder Engagement</option>
+          <option value="Church Liaison">Church Liaison</option>
+          <option value="Website and Communications">Website and Communications</option>
+          <option value="Procurement">Procurement</option>
+          <option value="Recruitment">Recruitment</option>
+          <option value="Interface with Project Consultants">Interface with Project Consultants</option>
+          <option value="Reviewing Project Documentation">Reviewing Project Documentation</option>
+          <option value="Other">Other</option>
+        </select>
+      </label><br>
+
+      <label>If 'Other', describe:
+        <input type="text" id="otherDetails">
+      </label><br>
+
+      <button type="submit">Submit Entry</button>
+    </form>
+
+    <section>
+      <h2>Entries</h2>
+
+      <div class="download-bar">
+        <label for="weekSelect">Download CSV for Month:</label>
+        <select id="weekSelect">
+          <option value="">Select a Month</option>
+        </select>
+        <button id="downloadCSV">Download Selected Month</button>
+      </div>
+
+      <div id="weeklyEntriesContainer"></div>
+    </section>
+  </main>
+
+  <script src="app-v2.js"></script>
+</body>
+</html>

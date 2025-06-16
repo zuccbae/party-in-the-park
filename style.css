@@ -1,0 +1,146 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #eaf3fc; /* soft blue */
+  padding: 1rem;
+  color: #222;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: #003366;
+}
+
+/* Form Styling */
+form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-inline: auto;
+}
+
+label {
+  display: block;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #336699;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #285580;
+}
+
+/* Entries Section */
+section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  max-width: 700px;
+  margin-inline: auto;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Download Section */
+.download-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.download-bar select,
+.download-bar button {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.download-bar button {
+  background-color: #336699;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.download-bar button:hover {
+  background-color: #285580;
+}
+
+/* Weekly Entries */
+#weeklyEntriesContainer ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+}
+
+#weeklyEntriesContainer li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: #f0f8ff;
+  border-left: 4px solid #336699;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  form, section, .week-display {
+    padding: 1rem;
+  }
+
+  .download-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button {
+    font-size: 1rem;
+  }
+}

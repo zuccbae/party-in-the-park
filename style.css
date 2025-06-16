@@ -1,14 +1,14 @@
-/* Basic Reset */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body Styling */
+/* Base Body Styling */
 body {
   font-family: Arial, sans-serif;
-  background-color: #eaf3fc; /* soft blue */
+  background-color: #eaf3fc;
   padding: 1rem;
   color: #222;
 }
@@ -24,7 +24,7 @@ h1 {
   color: #003366;
 }
 
-/* Form Styling */
+/* Form */
 form {
   background: white;
   padding: 1.5rem;
@@ -42,7 +42,7 @@ label {
   font-weight: bold;
 }
 
-input, select, textarea {
+input, select {
   width: 100%;
   padding: 0.5rem;
   font-size: 1rem;
@@ -51,11 +51,7 @@ input, select, textarea {
   border-radius: 4px;
 }
 
-textarea {
-  resize: vertical;
-  min-height: 60px;
-}
-
+/* Button */
 button {
   width: 100%;
   padding: 0.75rem;
@@ -87,7 +83,7 @@ h2 {
   margin-bottom: 1rem;
 }
 
-/* Download Section */
+/* Download Bar */
 .download-bar {
   display: flex;
   flex-wrap: wrap;
@@ -115,7 +111,7 @@ h2 {
   background-color: #285580;
 }
 
-/* Weekly Entries */
+/* Entry List */
 #weeklyEntriesContainer ul {
   list-style: none;
   padding-left: 0;
@@ -131,7 +127,7 @@ h2 {
 
 /* Responsive */
 @media (max-width: 600px) {
-  form, section, .week-display {
+  form, section {
     padding: 1rem;
   }
 

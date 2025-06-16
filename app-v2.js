@@ -15,24 +15,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const firstName = document.getElementById('firstName').value.trim();
     const lastName = document.getElementById('lastName').value.trim();
-    const month = document.getElementById('month').value;
-    const year = document.getElementById('year').value;
-    const daysSpent = parseFloat(document.getElementById('daysSpent').value) || 0;
+    const workDate = document.getElementById('workDate').value;
+    const hoursWorked = parseInt(document.getElementById('daysSpent').value, 10) || 0;
     const taskType = document.getElementById('taskType').value;
     const other = document.getElementById('otherDetails').value.trim();
     const timestamp = new Date().toISOString();
+
+    const dateObj = new Date(workDate);
+    const month = dateObj.toLocaleString('default', { month: 'long' });
+    const year = dateObj.getFullYear();
 
     const entry = {
       Timestamp: timestamp,
       "First Name": firstName,
       "Last Name": lastName,
+      "Date Worked": workDate,
       Month: month,
       Year: year,
-      "Number of Days Spent": daysSpent,
+      "Number of Hours Worked": hoursWorked,
       "Task Type": taskType,
       Other: other
     };
 
+    // Cloud sync
     fetch('https://sheetdb.io/api/v1/qfiimhz27242h', {
       method: 'POST',
       body: JSON.stringify({ data: entry }),
@@ -49,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Cloud error – entry saved locally instead.');
     });
 
+    // Local save
     entries.push(entry);
     localStorage.setItem('volunteerEntries', JSON.stringify(entries));
     refreshView();
@@ -68,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const csvHeader = "First Name,Last Name,Month,Year,Number of Days Spent,Task Type,Other\n";
+    const csvHeader = "First Name,Last Name,Date Worked,Month,Year,Number of Hours Worked,Task Type,Other\n";
     const csvRows = weekEntries.map(entry =>
-      `${entry["First Name"]},${entry["Last Name"]},${entry.Month},${entry.Year},${entry["Number of Days Spent"]},${entry["Task Type"]},${entry.Other}`
+      `${entry["First Name"]},${entry["Last Name"]},${entry["Date Worked"]},${entry.Month},${entry.Year},${entry["Number of Hours Worked"]},${entry["Task Type"]},${entry.Other}`
     );
     const csvContent = csvHeader + csvRows.join("\n");
 
@@ -85,22 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function refreshView() {
-    grouped = groupEntriesByWeek(entries);
+    grouped = groupEntriesByMonth(entries);
     renderGroupedEntries(grouped);
-    populateWeekDropdown(grouped);
+    populateMonthDropdown(grouped);
   }
 
-  function getWeekNumber(date = new Date()) {
-    // Retained for naming compatibility
-    return '';
-  }
-
-  function groupEntriesByWeek(entries) {
+  function groupEntriesByMonth(entries) {
     const grouped = {};
     entries.forEach(entry => {
-      const month = entry.Month || "January";
-      const year = entry.Year || new Date().getFullYear();
-      const key = `${year}-${month}`;
+      const key = `${entry.Year}-${entry.Month}`;
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(entry);
     });
@@ -109,17 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderGroupedEntries(grouped) {
     weeklyContainer.innerHTML = '';
-    for (const week in grouped) {
+    for (const key in grouped) {
       const section = document.createElement('div');
-      section.innerHTML = `<h3>${week}</h3>`;
+      section.innerHTML = `<h3>${key}</h3>`;
       const ul = document.createElement('ul');
-      grouped[week].forEach(entry => {
+      grouped[key].forEach(entry => {
         let description = `${entry["Task Type"]}`;
         if (entry["Task Type"] === "Other" && entry.Other) {
           description += `: ${entry.Other}`;
         }
         const li = document.createElement('li');
-        li.textContent = `${entry["First Name"]} ${entry["Last Name"]} – ${entry.Month} ${entry.Year} – ${entry["Number of Days Spent"]} day(s) – ${description}`;
+        li.textContent = `${entry["First Name"]} ${entry["Last Name"]} – ${entry["Date Worked"]} – ${entry["Number of Hours Worked"]} hour(s) – ${description}`;
         ul.appendChild(li);
       });
       section.appendChild(ul);
@@ -127,31 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function populateWeekDropdown(grouped) {
+  function populateMonthDropdown(grouped) {
     weekSelect.innerHTML = `<option value="">Select a month</option>`;
-    Object.keys(grouped).forEach(week => {
+    Object.keys(grouped).forEach(key => {
       const option = document.createElement('option');
-      option.value = week;
-      option.textContent = week;
+      option.value = key;
+      option.textContent = key;
       weekSelect.appendChild(option);
     });
-  }
-
-  function displayCurrentWeekLabel() {
-    if (!weekDisplay) return;
-
-    const today = new Date();
-    const week = getWeekNumber(today);
-    const monday = new Date(today);
-    monday.setDate(monday.getDate() - ((today.getDay() + 6) % 7));
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-
-    const format = (date) => date.toLocaleDateString('en-GB', {
-      day: 'numeric', month: 'short', year: 'numeric'
-    });
-
-    const range = `${format(monday)} – ${format(sunday)}`;
-    weekDisplay.textContent = `Logging entries for: ${week} (${range})`;
   }
 });
